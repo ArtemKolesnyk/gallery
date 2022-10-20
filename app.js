@@ -63,15 +63,28 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
-const refListGaleryCard = document.querySelector('.gallery.js-gallery');
-const cardMarkup = createImgCardMurkup(galleryItems);
-refListGaleryCard.insertAdjacentHTML('afterbegin', cardMarkup); 
-refListGaleryCard.addEventListener('click', onClickImgList)
+const refs = {
+  ListGalleryItems: document.querySelector('.js-gallery'),
+  modalGallery: document.querySelector('.js-lightbox'),
+  btnClose: document.querySelector('.lightbox__button'),
+  lightBoxImg: document.querySelector('.lightbox__image'),
+  owerlay: document.querySelector('.lightbox__overlay'),
+}
+
+const ESC_KEY_CODE = 'Escape';
+const ARR_RIHGT_KEY_CODE = 'ArrowRight';
+const ARR_LEFT_KEY_CODE = 'ArrowLeft';
+
+const markupItemGallery = creatMarkupGaleryItem(galleryItems);
+
+refs.ListGalleryItems.insertAdjacentHTML('beforeend', markupItemGallery); 
+refs.ListGalleryItems.addEventListener('click', clickOnImg);
 
 
-function createImgCardMurkup(galleryItems) {
+
+function creatMarkupGaleryItem(galleryItems) {
   return galleryItems
-    .map(({ preview, original, description }) => {
+    .map(({preview, original, description}) => {
     return `
       <li class="gallery__item">
         <a
@@ -81,17 +94,69 @@ function createImgCardMurkup(galleryItems) {
           <img
             class="gallery__image"
             src="${preview}"
-            data-source="https://cdn.pixabay.com/photo/2010/12/13/10/13/tulips-2546_1280.jpg"
+            data-source="${original}"
             alt="${description}"
           />
         </a>
-    </li>
+      </li>
     `
     }).join('');
 };
 
-function onClickImgList(e) {
-  console.log(e.target);
+function clickOnImg(e) {
+  e.preventDefault();
+  const isImg = e.target;
+  if (!isImg) {
+   return
+  }
+  refs.lightBoxImg.src = e.target.dataset.source;
+  openModal();
 }
+
+function openModal() {
+  refs.modalGallery.classList.add('is-open');
+  addEventListener('keydown', onEscKeyPress);
+  addEventListener('keydown', slideRight);
+  addEventListener('keydown', slideLeft);
+  refs.owerlay.addEventListener('click', onOwerlayClick);
+  refs.btnClose.addEventListener('click', closeModalGalery);
+}
+
+function closeModalGalery() {
+  refs.modalGallery.classList.remove('is-open');
+  refs.lightBoxImg.src = '';
+  refs.lightBoxImg.alt = '';
+}
+
+function onEscKeyPress(e) {
+  const isEscKey = e.code;
+  if (isEscKey === ESC_KEY_CODE) {
+    closeModalGalery();
+  }
+}
+
+function onOwerlayClick () {
+  closeModalGalery();
+}
+
+function slideRight(e) {
+  const isRightKey = e.code;
+  if (isRightKey === ARR_RIHGT_KEY_CODE) {
+    console.log(isRightKey)
+  }
+}
+
+function slideLeft(e) {
+  const isLeftKey = e.code;
+  if (isLeftKey === ARR_LEFT_KEY_CODE) {
+    console.log(isLeftKey)
+  } 
+}
+
+
+
+
+
+
 
 
