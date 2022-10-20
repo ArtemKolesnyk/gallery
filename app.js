@@ -109,7 +109,7 @@ function clickOnImg(e) {
   if (!isImg) {
    return
   }
-  refs.lightBoxImg.src = e.target.dataset.source;
+  refs.lightBoxImg.src = isImg.dataset.source;
   openModal();
 }
 
@@ -121,11 +121,13 @@ function openModal() {
   refs.owerlay.addEventListener('click', onOwerlayClick);
   refs.btnClose.addEventListener('click', closeModalGalery);
 }
-
+function updataAtrr(src = '', alt = '') { 
+  refs.lightBoxImg.src = src;
+  refs.lightBoxImg.alt = alt;
+}
 function closeModalGalery() {
   refs.modalGallery.classList.remove('is-open');
-  refs.lightBoxImg.src = '';
-  refs.lightBoxImg.alt = '';
+  updataAtrr();
 }
 
 function onEscKeyPress(e) {
@@ -139,17 +141,35 @@ function onOwerlayClick () {
   closeModalGalery();
 }
 
+function slider(idx) {
+  const { original, description } = galleryItems[idx];
+  updataAtrr(original, description);
+}
+
+function getIndex() {
+ const source = galleryItems.map(({ original }) => original);
+  return source.indexOf(refs.lightBoxImg.src);
+}
+
 function slideRight(e) {
   const isRightKey = e.code;
   if (isRightKey === ARR_RIHGT_KEY_CODE) {
-    console.log(isRightKey)
+    let indexOfCurentImg = getIndex();
+    if (indexOfCurentImg + 1 > galleryItems.length -1) {
+      indexOfCurentImg = -1;
+    }
+    slider(indexOfCurentImg +1)
   }
 }
 
 function slideLeft(e) {
   const isLeftKey = e.code;
   if (isLeftKey === ARR_LEFT_KEY_CODE) {
-    console.log(isLeftKey)
+    let indexOfCurentImg = getIndex();
+    if (indexOfCurentImg === 0) {
+      indexOfCurentImg = galleryItems.length;
+    }
+    slider(indexOfCurentImg -1)
   } 
 }
 
